@@ -32,10 +32,15 @@ public class PointService {
         lock.lock();
         try {
             UserPoint userPoint = userPointRepository.selectById(id);
+            if (amount <= 0) {
+                throw new Exception("0 이하의 값을를 충전할 수 없습니다");
+            }
             long chargedPoint = userPoint.point() + amount;
             UserPoint resPoint = userPointRepository.insertOrUpdate(id, chargedPoint);
             pointHistoryRepository.insert(id, amount, TransactionType.CHARGE, resPoint.updateMillis());
             return resPoint;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             lock.unlock();
         }

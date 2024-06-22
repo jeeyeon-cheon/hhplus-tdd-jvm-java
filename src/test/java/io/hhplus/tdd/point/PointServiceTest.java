@@ -85,6 +85,18 @@ public class PointServiceTest {
         assertEquals(300, userPoint.point());
     }
 
+    @Test
+    @DisplayName("특정 유저가 음수의 포인트를 충전시 실패한다")
+    public void 특정_유저가_음수의_포인트를_충전시_실패한다() {
+        // Given : 유저 3이 포인트 0을 가지고 있다
+        long userId = 3l;
+        UserPoint zeroPoint = new UserPoint(userId, 0, System.currentTimeMillis());
+        when(userPointRepository.selectById(userId)).thenReturn(zeroPoint);
+
+        // When Then : -100의 포인트를 충전하려고 시도한다
+        assertThrows(Exception.class, () -> pointService.charge(3l, -100));
+    }
+
     /* 작성이유 : 특정 유저의 포인트를 충전했을 때 충전내역에 해당 내용이 업데이트되는지 확인하기 위함 */
     @Test
     @DisplayName("특정 유저의 포인트를 충전하고 히스토리 조회한다")
